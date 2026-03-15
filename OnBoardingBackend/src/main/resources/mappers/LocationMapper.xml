@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "com.FIT5120.OnBoardingBackend.mapper.LocationMapper">
+
+
+
+    <select id = "selectLocationByName" resultType="com.FIT5120.OnBoardingBackend.entity.entity.Location">
+        select locationId,address,longitude,latitude
+        from location
+        where address = #{address}
+    </select>
+
+
+
+    <select id="selectLocationByDetails" resultType="com.FIT5120.OnBoardingBackend.entity.entity.Location">
+        select locationId,address,longitude,latitude
+        from location
+        where longitude = #{longitude} and latitude = #{latitude}
+<!--        WHERE ABS(longitude - #{longitude}) &lt; 0.0001-->
+<!--            AND ABS(latitude - #{latitude}) &lt; 0.0001-->
+    </select>
+
+    <select id="getLocationDetails" resultType="com.FIT5120.OnBoardingBackend.dto.join.LocationDetailsJoinUVWarning">
+        select ltd.locationId,ltd.locationDate,ltd.uvId,ltd.uvIndex, uw.uvLevel, uw.timeToDamage, uw.description
+        from locationTimeDetails ltd
+        join uvWarning uw on ltd.uvId = uw.uvId
+        where locationId = #{locationId} and locationDate = #{locationDate}
+    </select>
+
+    <select id= "getClothes" resultType="com.FIT5120.OnBoardingBackend.entity.entity.Clothing">
+        select c.clothId, c.clothName, c.description, c.tag
+        from clothRecommend cr
+        join clothing c on cr.clothId = c.clothId
+        where uvId = #{uvId}
+    </select>
+
+    <select id= "protectionTipsDescription" resultType="java.lang.String">
+        select p.description
+        from protectionRecommend pr
+        join protectionTip p on pr.protectionId = p.protectionId
+        where uvId = #{uvId}
+    </select>
+
+</mapper>

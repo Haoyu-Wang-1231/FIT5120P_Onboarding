@@ -1,0 +1,13 @@
+uvId,uvLevel,timeToDamage,description
+1,Low,120,Minimal risk. Most people can stay outside safely with little to no protection.
+2,Low,90,Minimal risk. Most people can stay outside safely with little to no protection.
+3,Moderate,60,Moderate risk of harm from unprotected sun exposure. Wearing sunglasses and sunscreen is recommended.
+4,Moderate,45,Moderate UV radiation. Skin may begin to burn after prolonged exposure without protection.
+5,High,30,"High risk of skin damage. Sunscreen, protective clothing, and shade are recommended."
+6,High,25,Very strong UV radiation. Unprotected skin may burn quickly. Limit sun exposure.
+7,Very High,20,Very high UV levels. Skin damage can occur rapidly without protection.
+8,Very High,15,Very high risk of sunburn. Protective measures are strongly recommended.
+9,Very High,12,Extremely strong UV radiation. Avoid direct sun exposure during midday hours.
+10,Extreme,10,Extreme UV radiation. Unprotected skin can burn within minutes. Maximum protection required.
+11,Extreme,8,Extreme danger. Avoid sun exposure between 10am¨C4pm whenever possible.
+12,Extreme(12+),5,Extremely dangerous UV radiation. Skin damage can occur very quickly. Stay indoors or fully protected.

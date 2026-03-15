@@ -1,0 +1,11 @@
+clothId,clothName,description,tag
+1,UPF 30+ long sleeve shirt,Long sleeve shirt with UPF 30+ fabric that blocks at least 96% of UV radiation and helps reduce sunburn risk.,UPF30_SHIRT
+2,long pants,Long sleeve shirt with UPF 30+ fabric that blocks at least 96% of UV radiation and helps reduce sunburn risk.,LONG_PANTS
+3,hat,Basic sun hat that provides limited protection to the head and face from sunlight.,UPF30_SHIRT
+4,sunglasses,UV-protective sunglasses that shield the eyes from harmful ultraviolet radiation.,HAT_BASIC
+5,Long sleeve shirt,UV-protective sunglasses that shield the eyes from harmful ultraviolet radiation.,SUNGLASSES
+6,long pants/long shorts,Standard long sleeve shirt that provides moderate sun protection by covering arms.,LONG_SLEEVE_SHIRT
+7,broad-brim hat,Protective lower-body clothing covering legs partially or fully to reduce UV exposure.,BROAD_BRIM_HAT
+8,UPF 50+ clothing,"Clothing with UPF 50+ rating blocking more than 98% of UV radiation, offering very high sun protection.",BROAD_BRIM_HAT
+9,long sleeves,"Clothing with UPF 50+ rating blocking more than 98% of UV radiation, offering very high sun protection.",LONG_SLEEVES
+10,wide-brim or legionnaire hat,"Protective hat with wide brim or neck flap that protects face, neck, and ears from sun exposure.",LONG_SLEEVES
