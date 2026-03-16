@@ -91,7 +91,7 @@ export default {
       this.isLoading = true;
       this.error = null;
       try {
-        const response = await fetch('http://localhost:8080/v1/getUVDetailByLocationName', {
+        const response = await fetch('http://localhost:8080/api/v1/getUVDetailByLocationCoordinate', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
