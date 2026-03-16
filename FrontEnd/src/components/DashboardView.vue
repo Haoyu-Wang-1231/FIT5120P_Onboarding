@@ -4,7 +4,7 @@
       <div class="location-info">
         <span class="location-icon">📍</span>
         <span class="city-name">{{ location }}</span>
-        <span class="weather-info">Max forecast: UV {{ uvIndex }} ({{ getUvLevel() }})</span>
+        <span v-if="!isLoading && !error" class="weather-info">Max forecast: UV {{ uvIndex }} ({{ getUvLevel() }})</span>
       </div>
       <button class="change-loc-btn" @click="$emit('changeLocation')">Change location</button>
     </div>
@@ -19,34 +19,42 @@
     </nav>
 
     <main class="content-area">
-      <section class="hero-card" :class="getUvClass()">
-        <div class="uv-ring-container">
-          <div class="uv-ring">
-            <span class="uv-number">{{ uvIndex }}</span>
-            <span class="uv-label">{{ getUvLevel() }}</span>
+      <div v-if="isLoading" class="loading-state">
+        <p>Loading UV data...</p>
+      </div>
+      <div v-else-if="error" class="error-state">
+        <p>{{ error }}</p>
+      </div>
+      <template v-else>
+        <section class="hero-card" :class="getUvClass()">
+          <div class="uv-ring-container">
+            <div class="uv-ring">
+              <span class="uv-number">{{ uvIndex }}</span>
+              <span class="uv-label">{{ getUvLevel() }}</span>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section v-if="uvIndex >= 8" class="alert-card">
-        <div class="alert-header">
-          <span class="alert-icon">⚠</span>
-          <h3>Very High UV - This is serious!</h3>
-        </div>
-      </section>
+        <section v-if="uvIndex >= 8" class="alert-card">
+          <div class="alert-header">
+            <span class="alert-icon">⚠</span>
+            <h3>Very High UV - This is serious!</h3>
+          </div>
+        </section>
 
-      <ClothingRecommendations />
+        <ClothingRecommendations />
 
-      <section class="info-card tips-card">
-        <h3>Protection Tips</h3>
-        <ul class="tips-list">
-          <li>Slip on sun-protective clothing</li>
-          <li>Slop on SPF 30+ sunscreen</li>
-          <li>Slap on a broad-brimmed hat</li>
-          <li>Seek shade</li>
-          <li>Slide on sunglasses</li>
-        </ul>
-      </section>
+        <section class="info-card tips-card">
+          <h3>Protection Tips</h3>
+          <ul class="tips-list">
+            <li>Slip on sun-protective clothing</li>
+            <li>Slop on SPF 30+ sunscreen</li>
+            <li>Slap on a broad-brimmed hat</li>
+            <li>Seek shade</li>
+            <li>Slide on sunglasses</li>
+          </ul>
+        </section>
+      </template>
     </main>
   </div>
 </template>
@@ -61,11 +69,14 @@ export default {
   props: ['location'],
   data() {
     return {
-      uvIndex: 9,
+      uvIndex: null,
+      isLoading: true,
+      error: null,
     }
   },
   methods: {
     getUvLevel() {
+      if (this.uvIndex === null) return '';
       if (this.uvIndex <= 2) return 'LOW';
       if (this.uvIndex <= 5) return 'MODERATE';
       if (this.uvIndex <= 7) return 'HIGH';
@@ -73,13 +84,39 @@ export default {
       return 'EXTREME';
     },
     getUvClass() {
-      return this.getUvLevel().toLowerCase().replace(' ', '-');
+      const level = this.getUvLevel();
+      return level ? level.toLowerCase().replace(' ', '-') : '';
+    },
+    async fetchUvData() {
+      this.isLoading = true;
+      this.error = null;
+      try {
+        const response = await fetch('http://localhost:8080/v1/getUVDetailByLocationName', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ address: this.location }),
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        this.uvIndex = Math.round(data.uv.currentUV);
+
+        if (this.uvIndex >= 9) {
+          this.$emit('triggerAlert');
+        }
+      } catch (error) {
+        console.error('Error fetching UV data:', error);
+        this.error = 'Failed to load UV data. Please try again later.';
+      } finally {
+        this.isLoading = false;
+      }
     }
   },
   mounted() {
-    if (this.uvIndex >= 9) {
-      this.$emit('triggerAlert');
-    }
+    this.fetchUvData();
   }
 }
 </script>
@@ -204,5 +241,15 @@ export default {
 .tips-list {
   padding-left: 20px;
   line-height: 1.6;
+}
+
+.loading-state, .error-state {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+  color: #555;
+}
+.error-state {
+  color: #d9534f;
 }
 </style>
