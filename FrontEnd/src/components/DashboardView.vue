@@ -102,7 +102,7 @@ export default {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        this.uvIndex = Math.round(data.uv.currentUV);
+        this.uvIndex = Math.round(data.currentUVIndex);
 
         if (this.uvIndex >= 9) {
           this.$emit('triggerAlert');

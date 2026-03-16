@@ -4,17 +4,6 @@
       <h1 class="title">Real-Time UV Protection</h1>
       <p class="subtitle">Know exactly when UV radiation becomes dangerous</p>
 
-      <div class="input-group">
-        <label>Set Your Location</label>
-        <button class="current-loc-btn" @click="useCurrentLocation">
-          <span>📍</span> Use My Current Location
-        </button>
-      </div>
-
-      <div class="divider">
-        <span class="or-text">or</span>
-      </div>
-
       <div class="search-group">
         <input
           type="text"
@@ -103,55 +92,8 @@ export default {
   margin-bottom: 30px;
 }
 
-.input-group, .search-group {
-  margin-bottom: 20px;
-}
-
-.current-loc-btn {
-  width: 100%;
-  padding: 12px;
-  background-color: #007BFF;
-  color: white;
-  border-style: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: background-color 0.3s;
-}
-
-.current-loc-btn:hover {
-  background-color: #0056b3;
-}
-
-.divider {
-  position: relative;
-  text-align: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-.divider::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background-color: #ddd;
-}
-
-.or-text {
-  background-color: white;
-  padding-left: 10px;
-  padding-right: 10px;
-  color: #999;
-  position: relative;
-}
-
 .search-group {
+  margin-bottom: 20px;
   display: flex;
   gap: 10px;
 }
