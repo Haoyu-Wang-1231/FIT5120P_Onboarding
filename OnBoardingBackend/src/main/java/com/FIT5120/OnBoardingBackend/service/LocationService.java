@@ -2,13 +2,12 @@ package com.FIT5120.OnBoardingBackend.service;
 
 
 import com.FIT5120.OnBoardingBackend.dto.join.LocationDetailsJoinUVWarning;
-import com.FIT5120.OnBoardingBackend.dto.request.LocationRequest;
 import com.FIT5120.OnBoardingBackend.dto.response.LocationSummaryResponse;
 import com.FIT5120.OnBoardingBackend.entity.entity.Clothing;
 import com.FIT5120.OnBoardingBackend.entity.entity.Location;
-import com.FIT5120.OnBoardingBackend.entity.entity.LocationTimeDetails;
 import com.FIT5120.OnBoardingBackend.entity.model.ClothingItemModel;
 import com.FIT5120.OnBoardingBackend.entity.model.Recommendation;
+import com.FIT5120.OnBoardingBackend.exception.ResourceNotFoundException;
 import com.FIT5120.OnBoardingBackend.mapper.LocationMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -78,14 +77,14 @@ public class LocationService {
 
         if(location == null){
             log.info("location not existed.");
-            return null;
+            throw new ResourceNotFoundException("No such location.");
         }
 
         LocalDate targetDate = LocalDate.now().withYear(2024);
         LocationDetailsJoinUVWarning locationDetailsJoinUVWarning = locationMapper.getLocationDetails(location.getLocationId(), targetDate);
         if(locationDetailsJoinUVWarning == null){
             log.info("no such uv warning details.");
-            return null;
+            throw new ResourceNotFoundException("no such uv warning details.");
         }
         log.info(locationDetailsJoinUVWarning.toString());
 
@@ -108,8 +107,8 @@ public class LocationService {
 
         Location location = getLocationByCoordinate(longitude, latitude);
         if(location == null){
-            System.out.println("no such location.");
-            return null;
+            log.info("No such location.");
+            throw new ResourceNotFoundException("No such location.");
         }
         log.info(location.toString());
         LocalDate targetDate = LocalDate.now().withYear(2024);
@@ -117,7 +116,7 @@ public class LocationService {
         LocationDetailsJoinUVWarning locationDetailsJoinUVWarning =  locationMapper.getLocationDetails(location.getLocationId(), targetDate);
         if(locationDetailsJoinUVWarning == null){
             log.info("no such uv warning details.");
-            return null;
+            throw new ResourceNotFoundException("no such uv warning details.");
         }
 
         log.info(locationDetailsJoinUVWarning.toString());

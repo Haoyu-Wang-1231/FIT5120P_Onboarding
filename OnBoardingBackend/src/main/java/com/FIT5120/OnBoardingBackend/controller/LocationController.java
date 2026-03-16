@@ -3,12 +3,12 @@ package com.FIT5120.OnBoardingBackend.controller;
 import com.FIT5120.OnBoardingBackend.dto.request.LocationNameRequest;
 import com.FIT5120.OnBoardingBackend.dto.request.LocationRequest;
 import com.FIT5120.OnBoardingBackend.dto.response.LocationSummaryResponse;
-import com.FIT5120.OnBoardingBackend.entity.entity.Location;
 import com.FIT5120.OnBoardingBackend.service.LocationService;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/v1")
 public class LocationController {
@@ -35,36 +35,17 @@ public class LocationController {
 
     @PostMapping("/getUVDetailByLocationName")
     public ResponseEntity<LocationSummaryResponse> getUVDetailsByLocationName(@RequestBody LocationNameRequest request){
-        LocationSummaryResponse lsr;
+        LocationSummaryResponse response= locationService.getUvDetailsByAddressName(request.getAddress());
 
-
-        try{
-            lsr = locationService.getUvDetailsByAddressName(request.getAddress());
-
-        }catch (Exception e){
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
-        }
-
-        return ResponseEntity.ok(lsr);
+        return ResponseEntity.ok(response);
     }
 
 
     @PostMapping("/getUVDetailByLocationCoordinate")
     public ResponseEntity<LocationSummaryResponse> getLocation(@RequestBody LocationRequest request){
-        LocationSummaryResponse lsr;
+        LocationSummaryResponse response = locationService.getLocationDetails(request.getLongitude(), request.getLatitude());
 
-        try{
-            lsr = locationService.getLocationDetails(request.getLongitude(), request.getLatitude());
-
-        }catch (Exception e){
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
-        }
-
-        return ResponseEntity.ok(lsr);
+        return ResponseEntity.ok(response);
     }
 
 
