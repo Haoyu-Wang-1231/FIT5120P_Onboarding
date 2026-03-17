@@ -91,7 +91,7 @@ export default {
       this.isLoading = true;
       this.error = null;
       try {
-        const response = await fetch('http://localhost:8080/api/v1/getUVDetailByLocationCoordinate', {
+        const response = await fetch('http://localhost:8080/api/v1/getUVDetailByLocationName', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ export default {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        this.uvIndex = Math.round(data.currentUVIndex);
+        this.uvIndex = Math.round(data.currentUvIndex);
 
         if (this.uvIndex >= 9) {
           this.$emit('triggerAlert');

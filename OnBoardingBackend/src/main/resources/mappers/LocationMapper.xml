@@ -9,7 +9,7 @@
     <select id = "selectLocationByName" resultType="com.FIT5120.OnBoardingBackend.entity.entity.Location">
         select locationId,address,longitude,latitude
         from location
-        where address = #{address}
+        where LOWER(address) = LOWER(#{address})
     </select>
 
 
@@ -26,7 +26,7 @@
         select ltd.locationId,ltd.locationDate,ltd.uvId,ltd.uvIndex, uw.uvLevel, uw.timeToDamage, uw.description
         from locationTimeDetails ltd
         join uvWarning uw on ltd.uvId = uw.uvId
-        where locationId = #{locationId} and locationDate = #{locationDate}
+        where locationId = #{locationId} and DATE(locationDate) = DATE(#{locationDate})
     </select>
 
     <select id= "getClothes" resultType="com.FIT5120.OnBoardingBackend.entity.entity.Clothing">

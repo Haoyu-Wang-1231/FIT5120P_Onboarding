@@ -33,9 +33,7 @@ public class LocationService {
     }
 
     private Location getLocationByName(String name){
-        String lowercaseName = name.toLowerCase();
-
-        return locationMapper.selectLocationByName(lowercaseName);
+        return locationMapper.selectLocationByName(name);
     }
 
     private List<ClothingItemModel> getClothingList(Integer uvId){
@@ -80,7 +78,7 @@ public class LocationService {
             throw new ResourceNotFoundException("No such location.");
         }
 
-        LocalDate targetDate = LocalDate.now().withYear(2024);
+        LocalDate targetDate = LocalDate.now().withYear(2024).withMonth(3);
         LocationDetailsJoinUVWarning locationDetailsJoinUVWarning = locationMapper.getLocationDetails(location.getLocationId(), targetDate);
         if(locationDetailsJoinUVWarning == null){
             log.info("no such uv warning details.");
@@ -88,11 +86,11 @@ public class LocationService {
         }
         log.info(locationDetailsJoinUVWarning.toString());
 
-        List<ClothingItemModel> ClothingList = getClothingList(locationDetailsJoinUVWarning.getUvId());
+        List<ClothingItemModel> clothingList = getClothingList(locationDetailsJoinUVWarning.getUvId());
 
         List<String> protectionDescription = locationMapper.protectionTipsDescription(locationDetailsJoinUVWarning.getUvId());
 
-        Recommendation recommendation = setupRecommendation(ClothingList, protectionDescription);
+        Recommendation recommendation = setupRecommendation(clothingList, protectionDescription);
 
         return setupLocationSummaryResponse(location.getAddress(),
                 locationDetailsJoinUVWarning.getUvIndex(),
@@ -111,7 +109,7 @@ public class LocationService {
             throw new ResourceNotFoundException("No such location.");
         }
         log.info(location.toString());
-        LocalDate targetDate = LocalDate.now().withYear(2024);
+        LocalDate targetDate = LocalDate.now().withYear(2024).withMonth(3);
 
         LocationDetailsJoinUVWarning locationDetailsJoinUVWarning =  locationMapper.getLocationDetails(location.getLocationId(), targetDate);
         if(locationDetailsJoinUVWarning == null){
@@ -121,11 +119,11 @@ public class LocationService {
 
         log.info(locationDetailsJoinUVWarning.toString());
 
-        List<ClothingItemModel> ClothingList = getClothingList(locationDetailsJoinUVWarning.getUvId());
+        List<ClothingItemModel> clothingList = getClothingList(locationDetailsJoinUVWarning.getUvId());
 
         List<String> protectionDescription = locationMapper.protectionTipsDescription(locationDetailsJoinUVWarning.getUvId());
 
-        Recommendation recommendation = setupRecommendation(ClothingList, protectionDescription);
+        Recommendation recommendation = setupRecommendation(clothingList, protectionDescription);
 
 
         return setupLocationSummaryResponse(location.getAddress(),
