@@ -4,6 +4,7 @@ import com.FIT5120.OnBoardingBackend.dto.join.LocationDetailsJoinUVWarning;
 import com.FIT5120.OnBoardingBackend.entity.entity.Clothing;
 import com.FIT5120.OnBoardingBackend.entity.entity.Location;
 import com.FIT5120.OnBoardingBackend.entity.entity.LocationTimeDetails;
+import com.FIT5120.OnBoardingBackend.entity.entity.UVWarning;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDate;
@@ -23,5 +24,7 @@ public interface LocationMapper {
     List<Clothing> getClothes(@Param("uvId") Integer uvId);
 
     List<String> protectionTipsDescription(@Param("uvId") Integer uvId);
+
+    UVWarning getUVWarningDetails(@Param("uvId") Integer uvId);
 
 }

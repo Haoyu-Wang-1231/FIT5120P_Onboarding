@@ -43,4 +43,11 @@
         where uvId = #{uvId}
     </select>
 
+    <select id ="getUVWarningDetails" resultType="com.FIT5120.OnBoardingBackend.entity.entity.UVWarning">
+        select *
+        from uvwarning
+        where uvId = #{uvId}
+    </select>
+
+
 </mapper>

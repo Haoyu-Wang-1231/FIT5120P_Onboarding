@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/onboardingdb?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=utf-8&serverTimezone=Australia/Melbourne
+    username: root
+    password: 1231
+
+openuv:
+  api-key: openuv-716kf7rmmuhj0am-io
+

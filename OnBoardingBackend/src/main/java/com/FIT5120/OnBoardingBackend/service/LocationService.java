@@ -1,15 +1,18 @@
 package com.FIT5120.OnBoardingBackend.service;
 
 
-import com.FIT5120.OnBoardingBackend.dto.join.LocationDetailsJoinUVWarning;
+import com.FIT5120.OnBoardingBackend.client.OpenUvFeignClient;
+import com.FIT5120.OnBoardingBackend.dto.clientResponse.OpenuvResponse;
 import com.FIT5120.OnBoardingBackend.dto.response.LocationSummaryResponse;
 import com.FIT5120.OnBoardingBackend.entity.entity.Clothing;
 import com.FIT5120.OnBoardingBackend.entity.entity.Location;
+import com.FIT5120.OnBoardingBackend.entity.entity.UVWarning;
 import com.FIT5120.OnBoardingBackend.entity.model.ClothingItemModel;
 import com.FIT5120.OnBoardingBackend.entity.model.Recommendation;
 import com.FIT5120.OnBoardingBackend.exception.ResourceNotFoundException;
 import com.FIT5120.OnBoardingBackend.mapper.LocationMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
@@ -20,13 +23,12 @@ import java.util.List;
 @Service
 public class LocationService {
 
+    @Autowired
+    private OpenUvFeignClient openUvFeignClient;
 
-    private final LocationMapper locationMapper;
+    @Autowired
+    private LocationMapper locationMapper;
 
-
-    public LocationService(LocationMapper locationMapper){
-        this.locationMapper = locationMapper;
-    }
 
     private Location getLocationByCoordinate(Double longitude, Double latitude){
         return locationMapper.selectLocationByDetails(longitude, latitude);
@@ -56,21 +58,35 @@ public class LocationService {
         return recommendation;
     }
 
-    private LocationSummaryResponse setupLocationSummaryResponse(String address, Double uvIndex, String uvLevel, String description, Recommendation recommendation){
+    private LocationSummaryResponse setupLocationSummaryResponse(String address, Double currentUvIndex, Double uvMax,Integer uvId, Recommendation recommendation){
         LocationSummaryResponse lsr = new LocationSummaryResponse();
         lsr.setLocationName(address);
-        lsr.setCurrentUvIndex(uvIndex);
-        lsr.setUvLevel(uvLevel);
-        lsr.setDescription(description);
 
+        UVWarning uvWarning = locationMapper.getUVWarningDetails(uvId);
+
+        lsr.setUvMax(uvMax);
+        lsr.setCurrentUvIndex(currentUvIndex);
+        lsr.setUvLevel(uvWarning.getUvLevel());
+        lsr.setDescription(uvWarning.getDescription());
         lsr.setRecommendation(recommendation);
 
         return lsr;
     }
 
+    private Integer convertToUvId(Double uvIndex){
+        Integer uvId = (int) Math.floor(uvIndex);
+
+        if(uvId > 12){
+            uvId = 12;
+        }else if(uvId < 1){
+            uvId = 1;
+        }
+        return uvId;
+    }
+
+
 
     public LocationSummaryResponse getUvDetailsByAddressName(String name){
-        System.out.println("getUvDetailsByAddressName");
         Location location = getLocationByName(name);
 
         if(location == null){
@@ -78,58 +94,59 @@ public class LocationService {
             throw new ResourceNotFoundException("No such location.");
         }
 
-        LocalDate targetDate = LocalDate.now().withYear(2024).withMonth(3);
-        LocationDetailsJoinUVWarning locationDetailsJoinUVWarning = locationMapper.getLocationDetails(location.getLocationId(), targetDate);
-        if(locationDetailsJoinUVWarning == null){
-            log.info("no such uv warning details.");
-            throw new ResourceNotFoundException("no such uv warning details.");
+        OpenuvResponse or =  openUvFeignClient.getuv(location.getLatitude(), location.getLongitude());
+        if(or == null){
+            log.info("problem at API calling process.");
+            throw new ResourceNotFoundException("problem at API calling process.");
         }
-        log.info(locationDetailsJoinUVWarning.toString());
+        Double currentUvIndex = or.getResult().getUv();
 
-        List<ClothingItemModel> clothingList = getClothingList(locationDetailsJoinUVWarning.getUvId());
+        Integer uvId = convertToUvId(currentUvIndex);
 
-        List<String> protectionDescription = locationMapper.protectionTipsDescription(locationDetailsJoinUVWarning.getUvId());
+        log.info("CurrentUVIndexInteger is: {}", uvId);
 
-        Recommendation recommendation = setupRecommendation(clothingList, protectionDescription);
+        List<ClothingItemModel> clothingList = getClothingList(uvId);
+        List<String> protectionDescriptionList = locationMapper.protectionTipsDescription(uvId);
+
+        Recommendation recommendation = setupRecommendation(clothingList, protectionDescriptionList);
 
         return setupLocationSummaryResponse(location.getAddress(),
-                locationDetailsJoinUVWarning.getUvIndex(),
-                locationDetailsJoinUVWarning.getUvLevel(),
-                locationDetailsJoinUVWarning.getDescription(),
+                currentUvIndex,
+                or.getResult().getUvMax(),
+                uvId,
                 recommendation
-                );
+            );
     }
-
 
     public LocationSummaryResponse getLocationDetails(Double longitude, Double latitude){
 
         Location location = getLocationByCoordinate(longitude, latitude);
+
         if(location == null){
-            log.info("No such location.");
+            log.info("location not existed.");
             throw new ResourceNotFoundException("No such location.");
         }
-        log.info(location.toString());
-        LocalDate targetDate = LocalDate.now().withYear(2024).withMonth(3);
 
-        LocationDetailsJoinUVWarning locationDetailsJoinUVWarning =  locationMapper.getLocationDetails(location.getLocationId(), targetDate);
-        if(locationDetailsJoinUVWarning == null){
-            log.info("no such uv warning details.");
-            throw new ResourceNotFoundException("no such uv warning details.");
+        OpenuvResponse or =  openUvFeignClient.getuv(latitude, longitude);
+        if(or == null){
+            log.info("problem at API calling process.");
+            throw new ResourceNotFoundException("problem at API calling process.");
         }
+        Double currentUvIndex = or.getResult().getUv();
 
-        log.info(locationDetailsJoinUVWarning.toString());
+        Integer uvId = convertToUvId(currentUvIndex);
 
-        List<ClothingItemModel> clothingList = getClothingList(locationDetailsJoinUVWarning.getUvId());
+        log.info("CurrentUVIndexInteger is: {}", uvId);
 
-        List<String> protectionDescription = locationMapper.protectionTipsDescription(locationDetailsJoinUVWarning.getUvId());
+        List<ClothingItemModel> clothingList = getClothingList(uvId);
+        List<String> protectionDescriptionList = locationMapper.protectionTipsDescription(uvId);
 
-        Recommendation recommendation = setupRecommendation(clothingList, protectionDescription);
-
+        Recommendation recommendation = setupRecommendation(clothingList, protectionDescriptionList);
 
         return setupLocationSummaryResponse(location.getAddress(),
-                locationDetailsJoinUVWarning.getUvIndex(),
-                locationDetailsJoinUVWarning.getUvLevel(),
-                locationDetailsJoinUVWarning.getDescription(),
+                currentUvIndex,
+                or.getResult().getUvMax(),
+                uvId,
                 recommendation
         );
     }

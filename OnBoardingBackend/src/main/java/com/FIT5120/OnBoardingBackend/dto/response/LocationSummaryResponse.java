@@ -9,6 +9,7 @@ public class LocationSummaryResponse {
 
     private String locationName;
     private Double currentUvIndex;
+    private Double uvMax;
     private String uvLevel;
     private String description;
     private Recommendation recommendation;
